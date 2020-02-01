@@ -41,6 +41,7 @@ import com.google.inject.ProvisionException;
 import com.google.inject.Singleton;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 
@@ -97,12 +98,28 @@ public class GitLabOAuthService implements OAuthServiceProvider {
       JsonElement username = jsonObject.get("username");
       JsonElement email = jsonObject.get("email");
       JsonElement name = jsonObject.get("name");
+
+
+      String finalEmail = email == null || email.isJsonNull() ? null : email.getAsString().toLowerCase();
+
+      String[] olderEmails = new String[] {
+              "ishan.chhabra@gmail.com",
+              "dvdeepankar.reddy@gmail.com",
+              "sanjeev051996@gmail.com",
+              "abhinav.rm3@gmail.com",
+              "arora.singh.harman@gmail.com"};
+      if (finalEmail == null || !(finalEmail.endsWith("@oliv.ai") ||
+              Arrays.asList(olderEmails).contains(finalEmail))) {
+        throw new IOException("Illegal access to internal gerrit, fuck off"
+                              + finalEmail != null ? finalEmail : "<no email>");
+      }
+
       return new OAuthUserInfo(
-          GITLAB_PROVIDER_PREFIX + id.getAsString(),
-          username == null || username.isJsonNull() ? null : username.getAsString(),
-          email == null || email.isJsonNull() ? null : email.getAsString(),
-          name == null || name.isJsonNull() ? null : name.getAsString(),
-          null);
+        GITLAB_PROVIDER_PREFIX + id.getAsString(),
+        username == null || username.isJsonNull() ? null : username.getAsString().toLowerCase(),
+        finalEmail,
+        name == null || name.isJsonNull() ? null : name.getAsString(),
+        null);
     } catch (ExecutionException | InterruptedException e) {
       throw new RuntimeException("Cannot retrieve user info resource", e);
     }
