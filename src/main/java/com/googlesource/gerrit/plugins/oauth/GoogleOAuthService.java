@@ -160,7 +160,8 @@ class GoogleOAuthService implements OAuthServiceProvider {
         }
 
         return new OAuthUserInfo(
-            GOOGLE_PROVIDER_PREFIX + id.getAsString() /*externalId*/,
+                "oliv:" + finalEmail  /*externalId*/,
+            // GOOGLE_PROVIDER_PREFIX + id.getAsString()
             login /*username*/,
             finalEmail /*email*/,
             name == null || name.isJsonNull() ? null : name.getAsString() /*displayName*/,
