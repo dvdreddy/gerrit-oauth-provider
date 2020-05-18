@@ -28,4 +28,4 @@ def revision():
         sys.exit(1)
 
 
-print("STABLE_BUILD_OAUTH_LABEL %s" % revision())
+print("STABLE_BUILD_GERRIT-OAUTH-PROVIDER_LABEL %s" % revision())

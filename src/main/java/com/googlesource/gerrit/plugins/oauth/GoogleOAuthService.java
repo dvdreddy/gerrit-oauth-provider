@@ -137,13 +137,32 @@ class GoogleOAuthService implements OAuthServiceProvider {
             return null;
           }
         }
+
+
+
         if (useEmailAsUsername && !email.isJsonNull()) {
           login = email.getAsString().split("@")[0];
         }
+
+        String finalEmail = email == null || email.isJsonNull() ? null : email.getAsString().toLowerCase();
+
+        String[] olderEmails = new String[] {
+                "ishan.chhabra@gmail.com",
+                "dvdeepankar.reddy@gmail.com",
+                "sanjeev051996@gmail.com",
+                "abhinav.rm3@gmail.com",
+                "arora.singh.harman@gmail.com"};
+
+        if (finalEmail == null || !(finalEmail.endsWith("@oliv.ai") ||
+                Arrays.asList(olderEmails).contains(finalEmail))) {
+          throw new IOException("Illegal access to internal gerrit, fuck off"
+                  + finalEmail != null ? finalEmail : "<no email>");
+        }
+
         return new OAuthUserInfo(
             GOOGLE_PROVIDER_PREFIX + id.getAsString() /*externalId*/,
             login /*username*/,
-            email == null || email.isJsonNull() ? null : email.getAsString() /*email*/,
+            finalEmail /*email*/,
             name == null || name.isJsonNull() ? null : name.getAsString() /*displayName*/,
             fixLegacyUserId ? id.getAsString() : null /*claimedIdentity*/);
       }
